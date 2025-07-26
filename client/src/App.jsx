@@ -1,14 +1,23 @@
 import { Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
+
 import Dashboard from './pages/Dashboard';
+import AuthPage from './pages/Authentication';
+import LoginForm from './components/Login-form';
+import RegisterForm from './components/Register-form';
+import ForgotPasswordPage from './components/Forget-password';
+import Home from './pages/Home';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Home />} />
+      <Route path='/auth' element={<AuthPage />}>
+       <Route path="login" element={<LoginForm />} />
+        <Route path="signup" element={<RegisterForm />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+       
+      </Route>
+
     </Routes>
   );
 }
