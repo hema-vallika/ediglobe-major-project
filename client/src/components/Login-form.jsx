@@ -8,7 +8,8 @@ import { Input } from "./ui/Input"
 import { Label } from "./ui/Label"
 import { Checkbox } from "./ui/Checkbox"
 import { useNavigate } from "react-router-dom"
-
+import { useDispatch } from "react-redux"
+import { loginUser } from "../redux/slice/authSlice"
 
 
 export default function LoginForm() {
@@ -20,7 +21,8 @@ export default function LoginForm() {
   })
 
   const navigate = useNavigate(); // ✅ This is the correct place
-
+  const dispatch = useDispatch();
+  // const { isLoading, error } = useSelector((state) => state.auth);
   const handleSignup = () => {
     navigate("/auth/signup");
   };
@@ -33,6 +35,16 @@ export default function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log("Login attempt:", formData)
+    dispatch(loginUser(formData))
+      .unwrap()
+      .then(() => {
+        console.log("Login successful")
+        navigate("/") // Redirect to home on success
+      })
+      .catch((err) => {
+        console.error("Login failed:", err)
+        alert(err || "Login failed") // Show error message
+      })
   }
 
   const handleInputChange = (e) => {

@@ -1,6 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
 import {
   Users,
   BookOpen,
@@ -21,6 +22,7 @@ import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 
 export default function HomePage() {
+  const {token} = useSelector((state) => state.auth);
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -47,14 +49,14 @@ export default function HomePage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to={"/auth/login"}>
+                {!token &&<Link to={"/auth/login"}>
                   <Button
                     variant="outline"
                     className="border-white text-white hover:bg-white hover:text-slate-900 px-8 py-3 text-lg h-auto bg-transparent"
                   >
                     Login to Dashboard
                   </Button>
-                </Link>
+                </Link>}
               </div>
               <div className="flex items-center space-x-6 text-sm text-slate-300">
                 <div className="flex items-center space-x-2">

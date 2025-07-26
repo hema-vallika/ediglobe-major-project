@@ -4,9 +4,13 @@ import { useState } from "react"
 import {Link} from "react-router-dom"
 import { Menu, X, GraduationCap } from "lucide-react"
 import { Button } from "./ui/Button"
+import { useSelector } from "react-redux"
+
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const {token} = useSelector((state) => state.auth);
+ 
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -39,6 +43,15 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Auth Buttons */}
+         {token ?(
+           <Link to={"/auth/login"} onClick={() => {
+              localStorage.removeItem("token");
+             
+            }}>
+            <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">
+              Logout
+            </Button>
+          </Link> ):(
           <div className="hidden md:flex items-center space-x-4">
             <Link to={"/auth/login"}>
               <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent">
@@ -49,6 +62,7 @@ export default function Navbar() {
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">Register</Button>
             </Link>
           </div>
+          )}
 
           {/* Mobile menu button */}
           <div className="md:hidden">

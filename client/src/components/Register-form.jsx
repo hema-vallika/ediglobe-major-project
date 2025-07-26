@@ -7,6 +7,8 @@ import { Input } from "./ui/Input"
 import { Label } from "./ui/Label"
 import { Checkbox } from "./ui/Checkbox"
 import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
+import { registerUser } from "../redux/slice/authSlice"
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -19,6 +21,8 @@ export default function RegisterForm() {
     agreeToTerms: false,
   })
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // const { isLoading, error } = useSelector((state) => state.auth);
   const handleSignin = () => {
     navigate("/auth/login");
   }
@@ -29,7 +33,16 @@ export default function RegisterForm() {
       alert("Passwords don't match!")
       return
     }
-    console.log("Register attempt:", formData)
+    dispatch(registerUser(formData))
+      .unwrap()
+      .then(() => {
+        console.log("Registration successful");
+        navigate("/auth/login");
+      })
+      .catch((err) => {
+        console.error("Registration failed:", err);
+        alert(err || "Registration failed");
+      });
   }
 
   const handleInputChange = (e) => {
