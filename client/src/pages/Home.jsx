@@ -20,9 +20,12 @@ import {
 import { Button } from "../components/ui/Button"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
+import { useNavigate } from "react-router-dom"
 
 export default function HomePage() {
   const {token} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -112,7 +115,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature Cards */}
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div onClick={() => navigate("/student-management")} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
                 <Users className="h-6 w-6 text-blue-600" />
               </div>
@@ -122,7 +125,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div onClick={() => navigate("/course-management")} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
                 <BookOpen className="h-6 w-6 text-green-600" />
               </div>
@@ -132,11 +135,11 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div onClick={() => navigate("/fees-management")} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
                 <Calendar className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">Schedule Management</h3>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Fees Management</h3>
               <p className="text-slate-600">
                 Automated timetable generation, class scheduling, and exam planning system.
               </p>

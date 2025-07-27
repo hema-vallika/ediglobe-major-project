@@ -1,20 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import {Link} from "react-router-dom"
-import { Menu, X, GraduationCap } from "lucide-react"
-import { Button } from "./ui/Button"
-import { useSelector } from "react-redux"
-
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, GraduationCap } from "lucide-react";
+import { Button } from "./ui/Button";
+import { useSelector,useDispatch } from "react-redux";
+import { logout } from "../redux/slice/authSlice.js"; // Adjust the import path as necessary
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const {token} = useSelector((state) => state.auth);
- 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
+  const handleLogout = () => {
+    
+    dispatch(logout());
+  };
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -23,45 +27,63 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-slate-800">EduManage</span>
+            <span className="text-xl font-bold text-slate-800 outline-none">EduManage</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
+            <Link
+              href="/"
+              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
+            >
               Home
             </Link>
-            <Link href="#features" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
+            <Link
+              href="#features"
+              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
+            >
               Features
             </Link>
-            <Link href="#about" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
+            <Link
+              href="#about"
+              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
+            >
               About
             </Link>
-            <Link href="#contact" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
+            <Link
+              href="#contact"
+              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
+            >
               Contact
             </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
-         {token ?(
-           <Link to={"/auth/login"} onClick={() => {
-              localStorage.removeItem("token");
-             
-            }}>
-            <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">
-              Logout
-            </Button>
-          </Link> ):(
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to={"/auth/login"}>
-              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent">
-                Login
+          {token ? (
+           
+              <Button
+                variant="outline" onClick={handleLogout}
+                className="hidden lg:block bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Logout
               </Button>
-            </Link>
-            <Link to={"/auth/signup"}>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">Register</Button>
-            </Link>
-          </div>
+            
+          ) : (
+            <div className="hidden md:flex items-center space-x-4">
+              <Link to={"/auth/login"}>
+                <Button
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                >
+                  Login
+                </Button>
+              </Link>
+              <Link to={"/auth/signup"}>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Register
+                </Button>
+              </Link>
+            </div>
           )}
 
           {/* Mobile menu button */}
@@ -70,7 +92,11 @@ export default function Navbar() {
               onClick={toggleMenu}
               className="text-slate-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -108,22 +134,44 @@ export default function Navbar() {
                 Contact
               </Link>
               <div className="flex flex-col space-y-2 px-3 py-2">
-                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                {!token ? (
+                  <>
+                    <Link
+                      to={"/auth/login"}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                      >
+                        Login
+                      </Button>
+                    </Link>
+                    <Link
+                      to={"/auth/signup"}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        Register
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
                   <Button
-                    variant="outline"
-                    className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                    onClick={() => {
+                      dispatch(logout());
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
                   >
-                    Login
+                    Logout
                   </Button>
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Register</Button>
-                </Link>
+                )}
               </div>
             </div>
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }

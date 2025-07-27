@@ -28,6 +28,17 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, thunkAPI) => {
+    try {
+      localStorage.removeItem("token");
+      return;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 
 // 🔹 Slice
 const authSlice = createSlice({

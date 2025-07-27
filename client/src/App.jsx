@@ -6,6 +6,9 @@ import LoginForm from './components/Login-form';
 import RegisterForm from './components/Register-form';
 import ForgotPasswordPage from './components/Forget-password';
 import Home from './pages/Home';
+import StudentsPage from './components/Student';
+import CoursesPage from './components/Course';
+import FeesPage from './components/Fees';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
        
       </Route>
+      <Route path='/student-management' element={<StudentsPage />} />
+      <Route path='/course-management' element={<CoursesPage />} />
+      <Route path='/fees-management' element={<FeesPage />} />
 
     </Routes>
   );
