@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";   
 import authRoutes from "./routes/authRoutes.js";
 import studentsRoutes from "./routes/studentRoutes.js";
+import teacherRoutes from "./routes/teacherRoutes.js";
+
 const app = express();
 dotenv.config();
 app.use(cors());
@@ -15,6 +17,8 @@ app.use("/api/auth",authRoutes)
 
 
 app.use("/api/students",studentsRoutes);
+
+app.use("/api/teachers",teacherRoutes);
 
 
 const PORT = process.env.PORT || 5000;
