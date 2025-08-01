@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import { Button } from "./ui/Button"
@@ -54,7 +52,6 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex flex-col lg:flex-row">
           {/* Left side - Illustration */}
@@ -76,7 +73,7 @@ export default function RegisterForm() {
                 <h2 className="text-xl lg:text-2xl font-semibold text-slate-600">Join Our College Community</h2>
                 <p className="text-slate-600">
                   Already have an account?{" "}
-                  <button onClick={handleSignin} className="text-blue-600 hover:text-blue-800 font-medium underline">
+                  <button onClick={handleSignin} className="text-blue-600 hover:text-blue-800 font-medium underline cursor-pointer">
                     Sign In Here
                   </button>
                 </p>
@@ -188,7 +185,7 @@ export default function RegisterForm() {
                 <Button
                   type="submit"
                   disabled={!formData.agreeToTerms}
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold rounded-full transition-colors"
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold rounded-full transition-colors cursor-pointer"
                 >
                   CREATE ACCOUNT
                 </Button>
@@ -244,6 +241,5 @@ export default function RegisterForm() {
           </div>
         </div>
       </div>
-    </div>
   )
 }

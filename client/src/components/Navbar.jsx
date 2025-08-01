@@ -1,23 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, GraduationCap } from "lucide-react";
 import { Button } from "./ui/Button";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice.js"; // Adjust the import path as necessary
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   const handleLogout = () => {
-    
     dispatch(logout());
+  };
+
+  const navLinks = [
+    { lable: "Home", path: "#home" },
+    { lable: "Features", path: "#features" },
+    { lable: "Student", path: "/student-management" },
+    { lable: "Course", path: "/course-management" },
+    { lable: "Fees", path: "/fees-management" },
+    { lable: "About", path: "#about" },
+    { lable: "Contact", path: "#contact" },
+  ];
+
+  const goToHomeSection = (section) => {
+    setIsMenuOpen(false);
+    navigate("/", { state: { scrollTo: section } });
   };
 
   return (
@@ -25,25 +40,47 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-slate-800 outline-none">EduManage</span>
+            <span className="text-xl font-bold text-slate-800 outline-none">
+              EduManage
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
+            {navLinks.map((link, index) =>
+              link.path.includes("#") ? (
+                <a
+                  key={link.lable + index}
+                  onClick={() => goToHomeSection(link.path.replace("#", ""))}
+                  className="text-slate-700 hover:text-blue-600 font-medium transition-colors cursor-pointer"
+                >
+                  {link.lable}
+                </a>
+              ) : (
+                <Link
+                  key={link.lable + index}
+                  to={link.path}
+                  className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  {link.lable}
+                </Link>
+              )
+            )}
+
+            {/* <Link
               href="/"
               className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
             >
               Home
             </Link>
-            <Link
+            <a
               href="#features"
               className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
             >
               Features
-            </Link>
+            </a>
             <Link
               href="#about"
               className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
@@ -55,19 +92,18 @@ export default function Navbar() {
               className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
             >
               Contact
-            </Link>
+            </Link> */}
           </div>
 
           {/* Desktop Auth Buttons */}
           {token ? (
-           
-              <Button
-                variant="outline" onClick={handleLogout}
-                className="hidden lg:block bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Logout
-              </Button>
-            
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="hidden lg:block bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Logout
+            </Button>
           ) : (
             <div className="hidden md:flex items-center space-x-4">
               <Link to={"/auth/login"}>

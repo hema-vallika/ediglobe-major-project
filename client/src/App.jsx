@@ -9,9 +9,20 @@ import Home from './pages/Home';
 import StudentsPage from './components/Student';
 import CoursesPage from './components/Course';
 import FeesPage from './components/Fees';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { refresh } from './redux/slice/authSlice';
+import {Toaster} from 'react-hot-toast';
 
 function App() {
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+    dispatch(refresh())
+  }, [])
+  
   return (
+    <>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path='/auth' element={<AuthPage />}>
@@ -23,8 +34,9 @@ function App() {
       <Route path='/student-management' element={<StudentsPage />} />
       <Route path='/course-management' element={<CoursesPage />} />
       <Route path='/fees-management' element={<FeesPage />} />
-
     </Routes>
+    <Toaster/>
+    </>
   );
 }
 

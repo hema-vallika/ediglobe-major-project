@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 // 🔹 Async thunk for login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        formData
+      );
       // Save token to localStorage
       localStorage.setItem("token", response.data.token);
       return response.data; // token + user
@@ -20,7 +24,10 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", formData);
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        formData
+      );
       // Save token to localStorage
       return response.data; // token + user
     } catch (error) {
@@ -55,6 +62,13 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem("token");
     },
+    refresh: (state) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const user = jwtDecode(token);
+        state.user=user
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -79,13 +93,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.token = action.payload.token;
         state.user = action.payload.user;
-        })
-        .addCase(registerUser.rejected, (state, action) => {
+      })
+      .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        })
+      });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, refresh } = authSlice.actions;
 export default authSlice.reducer;
