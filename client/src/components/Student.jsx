@@ -57,6 +57,21 @@ export default function StudentsPage() {
     return matchesSearch && matchesDepartment && matchesYear;
   });
 
+  const newEnrollments = students.filter((student) => {
+    const curDate = Date.now(); // Correct usage, not `new Date.now()`
+    const enrollmentDate = new Date(student.enrollmentDate).getTime();
+
+    const diffInMs = curDate - enrollmentDate;
+    const tenDaysInMs = 10 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
+
+    return diffInMs <= tenDaysInMs;
+  });
+
+  const graduatingSoon = students.filter(
+    (student) =>
+      student.year === "4th Year" && student.semester === "8th Semester"
+  );
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -186,7 +201,9 @@ export default function StudentsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">New Enrollments</p>
-                  <p className="text-2xl font-bold text-slate-800">156</p>
+                  <p className="text-2xl font-bold text-slate-800">
+                    {newEnrollments?.length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -198,7 +215,7 @@ export default function StudentsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Graduating Soon</p>
-                  <p className="text-2xl font-bold text-slate-800">89</p>
+                  <p className="text-2xl font-bold text-slate-800">{graduatingSoon.length}</p>
                 </div>
               </div>
             </div>

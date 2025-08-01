@@ -29,7 +29,9 @@ export default function StudentForm({ onClose, studentDetails }) {
             .toISOString()
             .split("T")[0],
         }
-      : {},
+      : {
+        enrollmentDate: new Date().toISOString().split("T")[0],
+      },
   });
   const [photoPreview, setPhotoPreview] = useState(studentDetails?.photo?.url);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -373,6 +375,7 @@ function InputGroup({
   register,
   className = "",
 }) {
+  const max = type === 'date' ? new Date().toISOString().split("T")[0] : undefined
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name}>
@@ -383,7 +386,9 @@ function InputGroup({
         placeholder={`Enter ${label}`}
         id={name}
         type={type}
+        max={max}
         {...register(name, { required })}
+
       />
     </div>
   );

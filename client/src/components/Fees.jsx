@@ -260,7 +260,7 @@ export default function FeesPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Total Revenue</p>
-                  <p className="text-2xl font-bold text-slate-800">${totalRevenue.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-slate-800">₹{totalRevenue.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -272,7 +272,7 @@ export default function FeesPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Pending Amount</p>
-                  <p className="text-2xl font-bold text-slate-800">${totalPending.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-slate-800">₹{totalPending.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -354,10 +354,10 @@ export default function FeesPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-900">Total: ${record.totalAmount.toLocaleString()}</div>
-                        <div className="text-sm text-green-600">Paid: ${record.paidAmount.toLocaleString()}</div>
+                        <div className="text-sm text-slate-900">Total: ₹{record.totalAmount.toLocaleString()}</div>
+                        <div className="text-sm text-green-600">Paid: ₹{record.paidAmount.toLocaleString()}</div>
                         {record.pendingAmount > 0 && (
-                          <div className="text-sm text-red-600">Pending: ${record.pendingAmount.toLocaleString()}</div>
+                          <div className="text-sm text-red-600">Pending: ₹{record.pendingAmount.toLocaleString()}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

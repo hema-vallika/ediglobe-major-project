@@ -27,7 +27,11 @@ const StudentDetails = ({ student }) => {
     category,
     guardianName,
     guardianPhone,
+    guardianOccupation,
     photo,
+    emergencyContact,
+    emergencyPhone,
+
   } = student;
 
   return (
@@ -68,8 +72,8 @@ const StudentDetails = ({ student }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-sm">
-              <div className="space-y-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-lg">
+              <div className="">
                 <p>
                   <strong>Email:</strong> {email}
                 </p>
@@ -97,7 +101,7 @@ const StudentDetails = ({ student }) => {
                 </p>
               </div>
 
-              <div className="space-y-1">
+              <div className="">
                 <p>
                   <strong>Department:</strong> {department}
                 </p>
@@ -116,6 +120,15 @@ const StudentDetails = ({ student }) => {
                 </p>
                 <p>
                   <strong>Guardian Phone:</strong> {guardianPhone}
+                </p>
+                <p>
+                  <strong>Guardian Occupation:</strong> {guardianOccupation}
+                </p>
+                <p>
+                  <strong>Emergency Contact:</strong> {emergencyContact}
+                </p>
+                <p>
+                  <strong>Emergency Phone:</strong> {emergencyPhone}
                 </p>
               </div>
 
