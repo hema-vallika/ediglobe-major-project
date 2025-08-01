@@ -9,7 +9,7 @@ import { logout } from "../redux/slice/authSlice.js"; // Adjust the import path 
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -68,42 +68,20 @@ export default function Navbar() {
                 </Link>
               )
             )}
-
-            {/* <Link
-              href="/"
-              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Home
-            </Link>
-            <a
-              href="#features"
-              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Features
-            </a>
-            <Link
-              href="#about"
-              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="#contact"
-              className="text-slate-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Contact
-            </Link> */}
           </div>
 
           {/* Desktop Auth Buttons */}
           {token ? (
+            <div className="flex items-center gap-4 justify-end">
+              <p className="text-xl font-semibold">{user?.username}</p>
             <Button
               variant="outline"
               onClick={handleLogout}
               className="hidden lg:block bg-blue-600 text-white hover:bg-blue-700"
-            >
+              >
               Logout
             </Button>
+              </div>
           ) : (
             <div className="hidden md:flex items-center space-x-4">
               <Link to={"/auth/login"}>

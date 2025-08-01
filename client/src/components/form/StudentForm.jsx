@@ -1,29 +1,43 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { X, Upload, User, Mail, BookOpen } from "lucide-react";
+import { useState } from "react";
+import { X, Upload, User, LoaderCircle } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Label } from "../ui/Label";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createSignature,
   deleteImage,
   uploadImage,
 } from "../../services/upload";
-import { createStudent } from "../../redux/slice/studentSlice";
+import { createStudent, updateStudent } from "../../redux/slice/studentSlice";
 import BtnLoader from "../BtnLoader";
 
-export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
+export default function StudentForm({ onClose, studentDetails }) {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
-  const [photoPreview, setPhotoPreview] = useState(null);
+  } = useForm({
+    defaultValues: studentDetails
+      ? {
+          ...studentDetails,
+          dateOfBirth: new Date(studentDetails.dateOfBirth)
+            .toISOString()
+            .split("T")[0],
+          enrollmentDate: new Date(studentDetails.enrollmentDate)
+            .toISOString()
+            .split("T")[0],
+        }
+      : {},
+  });
+  const [photoPreview, setPhotoPreview] = useState(studentDetails?.photo?.url);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const { loading } = useSelector((state) => state.student);
   const dispatch = useDispatch();
+
+  console.log("studentDetails", studentDetails);
 
   const departments = [
     "Computer Science",
@@ -47,6 +61,7 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
   const categories = ["General", "OBC", "SC", "ST", "EWS"];
 
   const handlePhotoChange = async (e) => {
+    setUploadingImage(true);
     if (uploadedImage) {
       const res = await deleteImage(uploadedImage.public_id);
       console.log("public id:", uploadedImage.public_id, res);
@@ -62,6 +77,7 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
 
     const res = await uploadImage(file);
     setUploadedImage(res);
+    setUploadingImage(false);
     console.log("image upload response:", res);
   };
 
@@ -69,35 +85,50 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
     const formData = {
       ...data,
       photo: {
-        public_id: uploadedImage?.public_id,
-        url: uploadedImage?.url,
+        public_id: uploadedImage?.public_id || studentDetails?.photo?.public_id,
+        url: uploadedImage?.url || studentDetails?.photo?.url,
       },
     };
-    // onSubmit(formData)
-    dispatch(createStudent(formData))
-      .unwrap()
-      .then((res) => {
-        console.log("Student created:", res);
-        reset();
-        setPhotoPreview(null);
-        setUploadedImage(null);
-        onClose();
-      })
-      .catch((err) => {
-        console.error("Failed to create student:", err);
-      });
+
+    if (studentDetails) {
+      dispatch(updateStudent({ id: studentDetails._id, formData }))
+        .unwrap()
+        .then((res) => {
+          console.log("Student Updated:", res);
+          reset();
+          setPhotoPreview(null);
+          setUploadedImage(null);
+          onClose();
+        })
+        .catch((err) => {
+          console.error("Failed to updated student:", err);
+        });
+    } else {
+      dispatch(createStudent(formData))
+        .unwrap()
+        .then((res) => {
+          console.log("Student created:", res);
+          reset();
+          setPhotoPreview(null);
+          setUploadedImage(null);
+          onClose();
+        })
+        .catch((err) => {
+          console.error("Failed to create student:", err);
+        });
+    }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-800">Add New Student</h2>
+          <h2 className="text-2xl font-bold text-slate-800">
+            {studentDetails ? "Update" : "Add"} Student
+          </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
           >
             <X className="h-6 w-6" />
           </button>
@@ -106,7 +137,9 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
         <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-8">
           {/* PHOTO */}
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden">
+            <div
+              className={`w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden relative`}
+            >
               {photoPreview ? (
                 <img
                   src={photoPreview}
@@ -115,6 +148,11 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
                 />
               ) : (
                 <User className="h-16 w-16 text-slate-400" />
+              )}
+              {uploadingImage && (
+                <div className="h-full w-full absolute top-0 left-0 rounded-full flex items-center justify-center bg-gray-400/50">
+                  <LoaderCircle size={32} className="animate-spin mx-auto" />
+                </div>
               )}
             </div>
             <div>
@@ -300,14 +338,24 @@ export default function AddStudentForm({ isOpen, onClose, onSubmit }) {
           </div>
 
           <div className="flex justify-end space-x-4 pt-6 border-t border-slate-200">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
               Cancel
             </Button>
             <Button
+              disabled={uploadingImage}
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+              className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer disabled:bg-blue-500 disabled:opacity-70"
             >
-              {loading ? <BtnLoader /> : "Add Student"}
+              {loading ? (
+                <BtnLoader />
+              ) : (
+                `${studentDetails ? "Update" : "Add"} Student`
+              )}
             </Button>
           </div>
         </form>

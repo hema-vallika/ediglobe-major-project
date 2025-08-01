@@ -18,7 +18,7 @@ import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import AddStudentForm from "./form/Add-student-form";
+import StudentForm from "./form/StudentForm";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteStudent, getAllStudents } from "../redux/slice/studentSlice";
 import StudentDetails from "./StudentDetails";
@@ -28,72 +28,13 @@ export default function StudentsPage() {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedYear, setSelectedYear] = useState("all");
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [curStudentData, setCurStudentData] = useState(null);
   const { students } = useSelector((state) => state.student);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllStudents());
   }, []);
-
-  // Sample student data
-  // const students = [
-  //   {
-  //     id: "STU001",
-  //     name: "John Smith",
-  //     email: "john.smith@college.edu",
-  //     phone: "+1 (555) 123-4567",
-  //     department: "Computer Science",
-  //     year: "3rd Year",
-  //     semester: "6th Semester",
-  //     address: "123 Main St, City, State 12345",
-  //     enrollmentDate: "2022-08-15",
-  //     gpa: "3.8",
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "STU002",
-  //     name: "Sarah Johnson",
-  //     email: "sarah.johnson@college.edu",
-  //     phone: "+1 (555) 234-5678",
-  //     department: "Business Administration",
-  //     year: "2nd Year",
-  //     semester: "4th Semester",
-  //     address: "456 Oak Ave, City, State 12345",
-  //     enrollmentDate: "2023-08-20",
-  //     gpa: "3.9",
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "STU003",
-  //     name: "Michael Brown",
-  //     email: "michael.brown@college.edu",
-  //     phone: "+1 (555) 345-6789",
-  //     department: "Engineering",
-  //     year: "4th Year",
-  //     semester: "8th Semester",
-  //     address: "789 Pine St, City, State 12345",
-  //     enrollmentDate: "2021-08-10",
-  //     gpa: "3.7",
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "STU004",
-  //     name: "Emily Davis",
-  //     email: "emily.davis@college.edu",
-  //     phone: "+1 (555) 456-7890",
-  //     department: "Psychology",
-  //     year: "1st Year",
-  //     semester: "2nd Semester",
-  //     address: "321 Elm St, City, State 12345",
-  //     enrollmentDate: "2024-08-25",
-  //     gpa: "4.0",
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  // ]
 
   const departments = [
     "Computer Science",
@@ -115,18 +56,7 @@ export default function StudentsPage() {
 
     return matchesSearch && matchesDepartment && matchesYear;
   });
-  const handleAddStudent = (studentData) => {
-    console.log("New student data:", studentData);
-    // Here you would typically send the data to your backend
-    // For now, we'll just log it
-  };
-  const [viewStudentDetails, setViewStudentDetails] = useState(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(true)
 
-  const handleViewStudent = (student) => {
-    setViewStudentDetails(student)
-    setIsDetailsOpen(true)
-  }
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -146,7 +76,10 @@ export default function StudentsPage() {
             <div className="mt-4 md:mt-0 flex space-x-3">
               <Button
                 className="bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => setIsAddFormOpen(true)}
+                onClick={() => {
+                  setIsAddFormOpen(true);
+                  setCurStudentData(null);
+                }}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Student
@@ -225,7 +158,9 @@ export default function StudentsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Total Students</p>
-                  <p className="text-2xl font-bold text-slate-800">{students?.length}</p>
+                  <p className="text-2xl font-bold text-slate-800">
+                    {students?.length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -238,7 +173,7 @@ export default function StudentsPage() {
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Active Students</p>
                   <p className="text-2xl font-bold text-slate-800">
-                    {students?.filter(s => s.status === 'active').length}
+                    {students?.filter((s) => s.status === "active").length}
                   </p>
                 </div>
               </div>
@@ -304,21 +239,21 @@ export default function StudentsPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
-                    {filteredStudents.map((student) => (
-                      <tr key={student.id} className="hover:bg-slate-50">
+                    {filteredStudents.reverse().map((student) => (
+                      <tr key={student?._id} className="hover:bg-slate-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <img
                               className="h-12 w-12 rounded-full object-cover object-top"
-                              src={student.photo.url || "/placeholder.svg"}
-                              alt={student.name}
+                              src={student?.photo?.url || "/placeholder.svg"}
+                              alt={student?.name}
                             />
                             <div className="ml-4">
                               <div className="text-sm font-medium text-slate-900 capitalize">
-                                {student.firstName} {student.lastName}
+                                {student?.firstName} {student?.lastName}
                               </div>
                               <div className="text-sm text-slate-500">
-                                {student.studentId}
+                                {student?.studentId}
                               </div>
                             </div>
                           </div>
@@ -326,19 +261,19 @@ export default function StudentsPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-slate-900 flex items-center mb-1">
                             <Mail className="h-3 w-3 mr-1 text-slate-400" />
-                            {student.email}
+                            {student?.email}
                           </div>
                           <div className="text-sm text-slate-500 flex items-center">
                             <Phone className="h-3 w-3 mr-1 text-slate-400" />
-                            {student.phone}
+                            {student?.phone}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-slate-900">
-                            {student.department}
+                            {student?.department}
                           </div>
                           <div className="text-sm text-slate-500">
-                            {student.year} • {student.semester}
+                            {student?.year} • {student?.semester}
                           </div>
                           {/* <div className="text-sm text-slate-500">
                             GPA: {student.gpa}
@@ -346,16 +281,20 @@ export default function StudentsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 capitalize">
-                            {student.status}
+                            {student?.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
-                            <StudentDetails student={student}/>
+                            <StudentDetails student={student} />
                             <Button
                               size="sm"
                               variant="outline"
                               className="h-8 w-8 p-0 bg-transparent cursor-pointer"
+                              onClick={() => {
+                                setIsAddFormOpen(true);
+                                setCurStudentData(student);
+                              }}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -363,7 +302,9 @@ export default function StudentsPage() {
                               size="sm"
                               variant="outline"
                               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 bg-transparent cursor-pointer"
-                              onClick={()=>dispatch(deleteStudent(student._id))}
+                              onClick={() =>
+                                dispatch(deleteStudent(student?._id))
+                              }
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -389,12 +330,12 @@ export default function StudentsPage() {
         </div>
       </section>
 
-      <AddStudentForm
-        isOpen={isAddFormOpen}
-        
-        onClose={() => setIsAddFormOpen(false)}
-        onSubmit={handleAddStudent}
-      />
+      {isAddFormOpen && (
+        <StudentForm
+          studentDetails={curStudentData}
+          onClose={() => setIsAddFormOpen(false)}
+        />
+      )}
 
       <Footer />
     </div>

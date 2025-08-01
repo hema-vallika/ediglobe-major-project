@@ -49,9 +49,11 @@ export const getStudentById = createAsyncThunk(
 // Update a student
 export const updateStudent = createAsyncThunk(
   "students/update",
-  async ({ id, studentData }, { rejectWithValue }) => {
+  async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${API_URL}/${id}`, studentData);
+      console.log({ id, formData });
+      
+      const response = await axios.put(`${API_URL}/${id}`, formData);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -153,6 +155,7 @@ const studentSlice = createSlice({
         state.students = state.students.map((s) =>
           s._id === action.payload._id ? action.payload : s
         );
+        toast.success("Student Details Updated Successfully.")
       })
       .addCase(updateStudent.rejected, (state, action) => {
         state.loading = false;
