@@ -6,6 +6,8 @@ export const getAllCourses = async (req, res) => {
         const courses = await Course.find().populate('instructor');
         res.status(200).json(courses);
     } catch (error) {
+        console.log(error);
+        
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -18,15 +20,16 @@ export const getCourseById = async (req, res) => {
         }
         res.status(200).json(course);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
 
 export const createCourse = async (req, res) => {
     try {
-        const { id } = req.body;
-        // Check if course with the same ID already exists
-        const existingCourse = await Course.findOne({ id });
+        const { courseCode } = req.body;
+        // Check if course with the same courseCode already exists
+        const existingCourse = await Course.findOne({ courseCode });
         if (existingCourse) {
             return res.status(400).json({ message: "Course with this ID already exists" });
         }
@@ -34,6 +37,7 @@ export const createCourse = async (req, res) => {
         await newCourse.save();
         res.status(201).json(newCourse);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -46,6 +50,7 @@ export const updateCourse = async (req, res) => {
         }
         res.status(200).json(course);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -58,6 +63,7 @@ export const deleteCourse = async (req, res) => {
         }
         res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }

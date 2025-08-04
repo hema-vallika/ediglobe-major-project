@@ -17,7 +17,6 @@ export default function StudentForm({ onClose, studentDetails }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
   } = useForm({
     defaultValues: studentDetails
       ? {

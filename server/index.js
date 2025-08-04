@@ -21,7 +21,7 @@ app.use('/api/upload', uploadRoute )
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentsRoutes);
 app.use("/api/teachers", teacherRoutes);
-app.use("/api/courses", courseRoutes);
+app.use("/api/course", courseRoutes);
 app.use("/api/fees", feesRoutes);
 
 const PORT = process.env.PORT || 5000;
