@@ -127,21 +127,26 @@ export default function FeesPage() {
   const statuses = ["Paid", "Partial", "Pending", "Overdue"];
   const semesters = ["Fall 2024", "Spring 2025", "Summer 2025"];
 
-  const filteredRecords = fees
+const filteredRecords = Array.isArray(fees)
   ? fees.filter((record) => {
+      const search = searchTerm.toLowerCase();
+
       const matchesSearch =
-        record.student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.student.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record._id.toLowerCase().includes(searchTerm.toLowerCase());
+        record?.student?.firstName?.toLowerCase().includes(search) ||
+        record?.student?.lastName?.toLowerCase().includes(search) ||
+        record?.student?.studentId?.toLowerCase().includes(search) ||
+        record?._id?.toLowerCase().includes(search);
+
       const matchesStatus =
         selectedStatus === "all" || record.status === selectedStatus;
+
       const matchesSemester =
         selectedSemester === "all" || record.semester === selectedSemester;
 
       return matchesSearch && matchesStatus && matchesSemester;
     })
   : [];
+
 
   // const handleAddFee = (feeData) => {
   //   console.log("New fee data:", feeData);
@@ -385,7 +390,7 @@ export default function FeesPage() {
                 <tbody className="bg-white divide-y divide-slate-200">
                   {filteredRecords.map((record) => (
                     <tr
-                      key={record.id}
+                      key={record._id}
                       className="hover:bg-slate-50"
                     >
                       <td className="px-6 py-4 whitespace-nowrap flex gap-2">

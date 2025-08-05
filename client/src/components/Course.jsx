@@ -53,30 +53,38 @@ export default function CoursesPage() {
   ];
   const semesters = ["Fall 2024", "Spring 2025", "Summer 2025"];
 
-  const filteredCourses = courses.length
-    ? courses.filter((course) => {
-        const matchesSearch =
-          course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDepartment =
-          selectedDepartment === "all" ||
-          course.department === selectedDepartment;
-        const matchesSemester =
-          selectedSemester === "all" || course.semester === selectedSemester;
+ const filteredCourses = courses.length
+  ? courses.filter((course) => {
+      const matchesSearch =
+        course?.courseName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.courseCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.instructor?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        return matchesSearch && matchesDepartment && matchesSemester;
-      })
-    : null;
+      const matchesDepartment =
+        selectedDepartment === "all" ||
+        course?.department === selectedDepartment;
 
-  const activeCourses = courses?.length
-    ? courses?.filter((c) => c.status === "Active").length
-    : 0;
-  const totalEnrollment = courses?.length
-    ? courses.reduce((acc, course) => {
-        return course.enrolledStudents.length ? acc + 1 : acc;
-      }, 0)
-    : 0;
+      const matchesSemester =
+        selectedSemester === "all" ||
+        course?.semester === selectedSemester;
+
+      return matchesSearch && matchesDepartment && matchesSemester;
+    })
+  : [];
+
+
+ const activeCourses = Array.isArray(courses)
+  ? courses.filter((c) => c.status === "Active").length
+  : 0;
+
+const totalEnrollment = Array.isArray(courses)
+  ? courses.reduce((acc, course) => {
+      return Array.isArray(course.enrolledStudents) && course.enrolledStudents.length > 0
+        ? acc + 1
+        : acc;
+    }, 0)
+  : 0;
+
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -320,19 +328,23 @@ const CourseCard = ({ course, setCurUpdatingCourse, setIsAddFormOpen }) => {
         <div className="mb-4">
           <div className="flex items-center justify-between text-sm text-slate-600 mb-2">
             <span>Enrollment</span>
-            <span>
-              {course?.enrolledStudents.length}/{course?.maxCapacity}
-            </span>
+           <span>
+            {Array.isArray(course?.enrolledStudents) ? course.enrolledStudents.length : 0}/{course?.maxCapacity || 0}
+          </span>
+
           </div>
           <div className="w-full bg-slate-200 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full"
-              style={{
-                width: `${
-                  (course?.enrolledStudents.length / course?.maxCapacity) * 100
-                }%`,
-              }}
-            ></div>
+            className="bg-blue-600 h-2 rounded-full"
+            style={{
+              width: `${
+                course?.maxCapacity && Array.isArray(course?.enrolledStudents)
+                  ? (course.enrolledStudents.length / course.maxCapacity) * 100
+                  : 0
+              }%`,
+            }}
+          ></div>
+
           </div>
         </div>
 

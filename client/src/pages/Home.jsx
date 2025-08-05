@@ -187,16 +187,16 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div onClick={() => navigate("/teacher-management")} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-6">
                 <BarChart3 className="h-6 w-6 text-yellow-600" />
               </div>
               <h3 className="text-xl font-semibold text-slate-800 mb-4">
-                Analytics & Reports
+                Teacher Management
               </h3>
               <p className="text-slate-600">
-                Detailed analytics, performance reports, and data-driven
-                insights for better decisions.
+                Manage faculty profiles, performance tracking, and professional
+                development opportunities.
               </p>
             </div>
 
