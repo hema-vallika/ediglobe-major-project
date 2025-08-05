@@ -22,6 +22,7 @@ import StudentForm from "./form/StudentForm";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteStudent, getAllStudents } from "../redux/slice/studentSlice";
 import StudentDetails from "./StudentDetails";
+import FeeForm from "./form/FeeForm";
 
 export default function StudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -303,6 +304,7 @@ export default function StudentsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
+                            <FeeForm studentId={student?._id} />
                             <StudentDetails student={student} />
                             <Button
                               size="sm"
