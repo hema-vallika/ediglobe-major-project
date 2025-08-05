@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Search,
   Plus,
@@ -21,6 +21,8 @@ import { Input } from "./ui/Input"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import AddTeacherForm from "./form/Add-teacher-form"
+import { useDispatch,useSelector} from "react-redux";
+import { getAllTeachers ,deleteTeacher,createTeacher,updateTeacher,getTeacherById} from "../redux/slice/teacherSlice"
 
 export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -28,73 +30,80 @@ export default function TeachersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
 
+  const dispatch = useDispatch();
+  const { teachers, loading, error } = useSelector((state) => state.teacher);
+
+  useEffect(() => {
+    dispatch(getAllTeachers()); 
+  }, [dispatch]);
+
   // Sample teacher data
-  const teachers = [
-    {
-      id: "TCH001",
-      name: "Dr. Robert Wilson",
-      email: "robert.wilson@college.edu",
-      phone: "+1 (555) 111-2222",
-      department: "Computer Science",
-      position: "Professor",
-      specialization: "Artificial Intelligence",
-      experience: "15 years",
-      qualification: "Ph.D. in Computer Science",
-      joiningDate: "2009-08-15",
-      coursesTeaching: ["AI Fundamentals", "Machine Learning", "Data Structures"],
-      studentsCount: 120,
-      status: "Active",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: "TCH002",
-      name: "Dr. Maria Garcia",
-      email: "maria.garcia@college.edu",
-      phone: "+1 (555) 222-3333",
-      department: "Business Administration",
-      position: "Associate Professor",
-      specialization: "Marketing Management",
-      experience: "12 years",
-      qualification: "Ph.D. in Business Administration",
-      joiningDate: "2012-01-20",
-      coursesTeaching: ["Marketing Strategy", "Consumer Behavior", "Digital Marketing"],
-      studentsCount: 95,
-      status: "Active",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: "TCH003",
-      name: "Prof. James Anderson",
-      email: "james.anderson@college.edu",
-      phone: "+1 (555) 333-4444",
-      department: "Engineering",
-      position: "Assistant Professor",
-      specialization: "Mechanical Engineering",
-      experience: "8 years",
-      qualification: "M.Tech in Mechanical Engineering",
-      joiningDate: "2016-07-10",
-      coursesTeaching: ["Thermodynamics", "Fluid Mechanics", "Heat Transfer"],
-      studentsCount: 85,
-      status: "Active",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: "TCH004",
-      name: "Dr. Sarah Thompson",
-      email: "sarah.thompson@college.edu",
-      phone: "+1 (555) 444-5555",
-      department: "Psychology",
-      position: "Professor",
-      specialization: "Clinical Psychology",
-      experience: "18 years",
-      qualification: "Ph.D. in Psychology",
-      joiningDate: "2006-09-01",
-      coursesTeaching: ["Abnormal Psychology", "Cognitive Psychology", "Research Methods"],
-      studentsCount: 110,
-      status: "On Leave",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-  ]
+  // const teachers = [
+  //   {
+  //     id: "TCH001",
+  //     name: "Dr. Robert Wilson",
+  //     email: "robert.wilson@college.edu",
+  //     phone: "+1 (555) 111-2222",
+  //     department: "Computer Science",
+  //     position: "Professor",
+  //     specialization: "Artificial Intelligence",
+  //     experience: "15 years",
+  //     qualification: "Ph.D. in Computer Science",
+  //     joiningDate: "2009-08-15",
+  //     coursesTeaching: ["AI Fundamentals", "Machine Learning", "Data Structures"],
+  //     studentsCount: 120,
+  //     status: "Active",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  //   {
+  //     id: "TCH002",
+  //     name: "Dr. Maria Garcia",
+  //     email: "maria.garcia@college.edu",
+  //     phone: "+1 (555) 222-3333",
+  //     department: "Business Administration",
+  //     position: "Associate Professor",
+  //     specialization: "Marketing Management",
+  //     experience: "12 years",
+  //     qualification: "Ph.D. in Business Administration",
+  //     joiningDate: "2012-01-20",
+  //     coursesTeaching: ["Marketing Strategy", "Consumer Behavior", "Digital Marketing"],
+  //     studentsCount: 95,
+  //     status: "Active",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  //   {
+  //     id: "TCH003",
+  //     name: "Prof. James Anderson",
+  //     email: "james.anderson@college.edu",
+  //     phone: "+1 (555) 333-4444",
+  //     department: "Engineering",
+  //     position: "Assistant Professor",
+  //     specialization: "Mechanical Engineering",
+  //     experience: "8 years",
+  //     qualification: "M.Tech in Mechanical Engineering",
+  //     joiningDate: "2016-07-10",
+  //     coursesTeaching: ["Thermodynamics", "Fluid Mechanics", "Heat Transfer"],
+  //     studentsCount: 85,
+  //     status: "Active",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  //   {
+  //     id: "TCH004",
+  //     name: "Dr. Sarah Thompson",
+  //     email: "sarah.thompson@college.edu",
+  //     phone: "+1 (555) 444-5555",
+  //     department: "Psychology",
+  //     position: "Professor",
+  //     specialization: "Clinical Psychology",
+  //     experience: "18 years",
+  //     qualification: "Ph.D. in Psychology",
+  //     joiningDate: "2006-09-01",
+  //     coursesTeaching: ["Abnormal Psychology", "Cognitive Psychology", "Research Methods"],
+  //     studentsCount: 110,
+  //     status: "On Leave",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  // ]
 
   const departments = ["Computer Science", "Business Administration", "Engineering", "Psychology", "Mathematics"]
   const statuses = ["Active", "On Leave", "Retired"]

@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { refresh } from './redux/slice/authSlice';
 import {Toaster} from 'react-hot-toast';
+import Teacher from './components/Teacher.jsx';
 
 function App() {
   const dispatch = useDispatch()
@@ -34,6 +35,7 @@ function App() {
       <Route path='/student-management' element={<StudentsPage />} />
       <Route path='/course-management' element={<CoursesPage />} />
       <Route path='/fees-management' element={<FeesPage />} />
+      <Route path='/teacher-management' element={<Teacher />} />
     </Routes>
     <Toaster/>
     </>

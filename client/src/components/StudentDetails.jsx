@@ -57,7 +57,7 @@ const StudentDetails = ({ student }) => {
 
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <img
-                src={photo.url}
+                src={photo?.url || "/placeholder.svg"}
                 alt="Student"
                 className="w-32 h-32 rounded-full object-cover shadow"
               />
