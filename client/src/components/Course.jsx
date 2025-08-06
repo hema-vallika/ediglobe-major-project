@@ -164,10 +164,10 @@ const totalEnrollment = Array.isArray(courses)
                 ))}
               </select>
 
-              <Button variant="outline" className="h-10 bg-transparent">
+              {/* <Button variant="outline" className="h-10 bg-transparent">
                 <Filter className="h-4 w-4 mr-2" />
                 More Filters
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

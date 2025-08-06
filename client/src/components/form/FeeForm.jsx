@@ -22,7 +22,7 @@ export default function FeeForm({
       ? { student: studentId }
       : {
           ...studentFeeDetails,
-          student: studentFeeDetails.student._id,
+          student: studentFeeDetails.student?._id,
           dueDate: new Date(studentFeeDetails.dueDate)
             .toISOString()
             .split("T")[0],

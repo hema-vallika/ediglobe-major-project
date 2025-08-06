@@ -19,6 +19,7 @@ export const createSignature = async () => {
 export const uploadImage = async (file) => {
   try {
     const signData = await createSignature();
+    console.log("Signature data:", signData);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("file", file);

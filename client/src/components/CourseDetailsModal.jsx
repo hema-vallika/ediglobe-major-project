@@ -32,7 +32,7 @@ const CourseDetailsModal = ({ course }) => {
 
             <div className="mb-4">
               <h2 className="text-2xl font-bold">
-                {course.courseName} ({course.courseCode})
+                {course.courseName} ({course?.courseCode})
               </h2>
               <p className="text-gray-600">{course.description}</p>
             </div>

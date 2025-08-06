@@ -2,6 +2,10 @@ import Teacher from "../models/Teacher.js";
 
 export const createTeacher = async (req, res) => {
     try {
+        console.log("Creating teacher with data:", req.body);
+        console.log("upload file",req.file);
+        
+        
         const { email } = req.body;
         // Check if teacher already exists
         const existingTeacher = await Teacher.findOne({ email});
@@ -12,6 +16,8 @@ export const createTeacher = async (req, res) => {
         await newTeacher.save();
         res.status(201).json(newTeacher);
     }catch(error){
+        console.log("Error creating teacher:", error);
+        
         res.status(500).json({ message: "Server error" });
     }
 };
@@ -39,7 +45,7 @@ export const getTeacherById = async (req, res) => {
 
 export const updateTeacher = async (req, res) => {
     try {
-        const teacher = await Teacher.findByIdAndUpdate(req.params.id,req.body,{new : true,});
+        const teacher = await Teacher.findOneAndUpdate({employeeId: req.params.id}, req.body, {new: true});
         if (!teacher) {
             return res.status(404).json({ message: "Teacher not found" });
         }

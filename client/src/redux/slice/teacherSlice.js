@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // Base API URL
-const API_URL = "http://localhost:5000/api/teacher";
+const API_URL = "http://localhost:5000/api/teachers";
 
 // --- Async Thunks ---
 
@@ -13,6 +13,8 @@ export const createTeacher = createAsyncThunk(
   async (teacherData, { rejectWithValue }) => {
     try {
       const response = await axios.post(API_URL, teacherData);
+      console.log("Teacher created:", response.data);
+      
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

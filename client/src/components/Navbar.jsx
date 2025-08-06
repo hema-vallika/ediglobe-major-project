@@ -26,6 +26,7 @@ export default function Navbar() {
     { lable: "Student", path: "/student-management" },
     { lable: "Course", path: "/course-management" },
     { lable: "Fees", path: "/fees-management" },
+    { lable: "Teacher", path: "/teacher-management" },
     { lable: "About", path: "#about" },
     { lable: "Contact", path: "#contact" },
   ];

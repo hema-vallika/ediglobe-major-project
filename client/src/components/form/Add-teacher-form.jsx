@@ -1,125 +1,171 @@
 "use client"
 
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useSelector } from "react-redux"
+import { LoaderCircle } from "lucide-react"
+import { useDispatch } from "react-redux"
+import { createTeacher } from "../../redux/slice/teacherSlice"
 import { X, Upload, User, Mail, BookOpen, Award } from "lucide-react"
 import { Button } from "../ui/Button"
 import { Input } from "../ui/Input"
 import { Label } from "../ui/Label"
+import toast from "react-hot-toast"
+import { deleteImage, uploadImage } from "../../services/upload.js" // Assuming you have a utility function for image upload
+import {updateTeacher } from "../../redux/slice/teacherSlice"
+import StudentDetails from "../StudentDetails.jsx"
+import BtnLoader from "../BtnLoader.jsx"
 
-export default function AddTeacherForm({ isOpen, onClose, onSubmit }) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    dateOfBirth: "",
-    gender: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    emergencyContact: "",
-    emergencyPhone: "",
-    department: "",
-    position: "",
-    specialization: "",
-    qualification: "",
-    experience: "",
-    joiningDate: "",
-    employeeId: "",
-    salary: "",
-    bloodGroup: "",
-    nationality: "",
-    maritalStatus: "",
-    previousInstitution: "",
-    researchInterests: "",
-    publications: "",
-    awards: "",
-    photo: null,
-  })
+export default function AddTeacherForm({ onClose, teacherDetails }) {
+  const {register, handleSubmit, reset} = useForm({
+    defaultValues: teacherDetails ? {
+      ...teacherDetails,
+              dateOfBirth: new Date(teacherDetails.dateOfBirth)
+            .toISOString()
+            .split("T")[0],
+          joiningDate: new Date(teacherDetails.joiningDate)
+            .toISOString()
+            .split("T")[0],
+        }:{
+          joiningDate: new Date().toISOString().split("T")[0],
+        }
+    })
 
-  const [photoPreview, setPhotoPreview] = useState(null)
+  // const [formData, setFormData] = useState({
+  //   firstName: "",
+  //   lastName: "",
+  //   email: "",
+  //   phone: "",
+  //   dateOfBirth: "",
+  //   gender: "",
+  //   address: "",
+  //   city: "",
+  //   state: "",
+  //   zipCode: "",
+  //   emergencyContact: "",
+  //   emergencyPhone: "",
+  //   department: "",
+  //   position: "",
+  //   specialization: "",
+  //   qualification: "",
+  //   experience: "",
+  //   joiningDate: "",
+  //   employeeId: "",
+  //   salary: "",
+  //   bloodGroup: "",
+  //   nationality: "",
+  //   maritalStatus: "",
+  //   previousInstitution: "",
+  //   researchInterests: "",
+  //   publications: "",
+  //   awards: "",
+  //   photo: null,
+  // })
+  const [photoPreview, setPhotoPreview] = useState(teacherDetails?.photo?.url || null);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const {loading} = useSelector((state) => state.teacher)
+  const dispatch = useDispatch();
 
+  console.log("Teacher details:", teacherDetails);
+
+  
   const departments = ["Computer Science", "Business Administration", "Engineering", "Psychology", "Mathematics"]
   const positions = ["Professor", "Associate Professor", "Assistant Professor", "Lecturer", "Visiting Faculty"]
   const qualifications = ["Ph.D.", "M.Tech", "M.Sc", "MBA", "M.A", "Other"]
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+  const specializations = [
+  "Computer Science", "Mathematics", "Physics", "Electronics", "Mechanical", "DBMS", "FLAT", "AI/ML", "Cybersecurity"
+];
+const categories = ["General", "SC", "ST", "OBC", "EWS"];
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        photo: file,
-      }))
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }))
+  // }
 
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result)
-      }
-      reader.readAsDataURL(file)
+
+  const handlePhotoChange = async (e) => {
+    setUploadingImage(true);
+    if (uploadedImage) {
+      const res = await deleteImage(uploadedImage.public_id);
+      console.log("public id:", uploadedImage.public_id, res);
     }
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    const res = await uploadImage(file);
+    setUploadedImage(res);
+    setUploadingImage(false);
+    console.log("image upload response:", res);
+  };
+
+
+const onFormSubmit = (data) => {
+  const formData = {
+    ...data,
+    photo: {
+      url: uploadedImage?.url || teacherDetails?.photo?.url || null,
+      public_id: uploadedImage?.public_id || StudentDetails?.photo?.public_id || null,
+    },
+  };
+  if(teacherDetails) {
+    dispatch(updateTeacher({ id: teacherDetails.employeeId, formData }))
+      .unwrap()
+      .then((res) => {
+        console.log("Teacher updated successfully",res);
+        
+        toast.success("Teacher updated successfully");
+        onClose();
+      })
+      .catch((error) => {
+        toast.error("Failed to update teacher");
+        console.error("Update teacher error:", error);
+      });
+  }else{
+    dispatch(createTeacher(formData))
+      .unwrap()
+      .then((res) => {
+        console.log("Teacher created successfully",res);
+        reset();
+        setPhotoPreview(null);
+        setUploadedImage(null);
+        
+        toast.success("Teacher added successfully");
+        onClose();
+      })
+      .catch((error) => {
+        toast.error("Failed to add teacher");
+        console.error("Create teacher error:", error);
+      });
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    onSubmit(formData)
-    // Reset form
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      dateOfBirth: "",
-      gender: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      emergencyContact: "",
-      emergencyPhone: "",
-      department: "",
-      position: "",
-      specialization: "",
-      qualification: "",
-      experience: "",
-      joiningDate: "",
-      employeeId: "",
-      salary: "",
-      bloodGroup: "",
-      nationality: "",
-      maritalStatus: "",
-      previousInstitution: "",
-      researchInterests: "",
-      publications: "",
-      awards: "",
-      photo: null,
-    })
-    setPhotoPreview(null)
-    onClose()
-  }
 
-  if (!isOpen) return null
+};
+
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-800">Add New Faculty</h2>
+          <h2 className="text-2xl font-bold text-slate-800">{StudentDetails?"Update":"Add"} Faculty</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-8">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-8">
           {/* Photo Upload */}
           <div className="flex flex-col items-center space-y-4">
             <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden">
@@ -128,9 +174,15 @@ export default function AddTeacherForm({ isOpen, onClose, onSubmit }) {
               ) : (
                 <User className="h-16 w-16 text-slate-400" />
               )}
+              {(uploadingImage && (
+                <div className="h-full w-full absolute top-0 left-0 rounded-full flex items-center justify-center bg-gray-400/50">
+                  <LoaderCircle size={32} className="animate-spin mx-auto" />
+                </div>
+
+              ))}
             </div>
             <div>
-              <input type="file" id="photo" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+              <input type="file" id="photo" accept="image/*" {...register("photo")} onChange={handlePhotoChange} className="hidden" />
               <label htmlFor="photo">
                 <Button type="button" variant="outline" className="cursor-pointer bg-transparent" asChild>
                   <span>
@@ -143,472 +195,242 @@ export default function AddTeacherForm({ isOpen, onClose, onSubmit }) {
           </div>
 
           {/* Personal Information */}
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <User className="h-5 w-5 mr-2 text-blue-600" />
-              Personal Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-slate-700">
-                  First Name *
-                </Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  placeholder="Enter first name"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-slate-700">
-                  Last Name *
-                </Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  placeholder="Enter last name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth" className="text-slate-700">
-                  Date of Birth *
-                </Label>
-                <Input
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender" className="text-slate-700">
-                  Gender *
-                </Label>
-                <select
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                  required
-                >
-                  <option value="">Select gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bloodGroup" className="text-slate-700">
-                  Blood Group
-                </Label>
-                <select
-                  id="bloodGroup"
-                  name="bloodGroup"
-                  value={formData.bloodGroup}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                >
-                  <option value="">Select blood group</option>
-                  {bloodGroups.map((group) => (
-                    <option key={group} value={group}>
-                      {group}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nationality" className="text-slate-700">
-                  Nationality
-                </Label>
-                <Input
-                  id="nationality"
-                  name="nationality"
-                  type="text"
-                  placeholder="Enter nationality"
-                  value={formData.nationality}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="maritalStatus" className="text-slate-700">
-                  Marital Status
-                </Label>
-                <select
-                  id="maritalStatus"
-                  name="maritalStatus"
-                  value={formData.maritalStatus}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                >
-                  <option value="">Select status</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </select>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputGroup
+              label="First Name"
+              name="firstName"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Last Name"
+              name="lastName"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Date of Birth"
+              name="dateOfBirth"
+              type="date"
+              required
+              register={register}
+            />
+            <SelectGroup
+              label="Gender"
+              name="gender"
+              options={["Male", "Female", "Other"]}
+              required
+              register={register}
+            />
+            <SelectGroup
+              label="Blood Group"
+              name="bloodGroup"
+              options={bloodGroups}
+              register={register}
+            />
+            <InputGroup
+              label="Nationality"
+              name="nationality"
+              register={register}
+            />
+            <InputGroup label="Religion" name="religion" register={register} />
+            <SelectGroup
+              label="Category"
+              name="category"
+              options={categories}
+              register={register}
+            />
           </div>
 
           {/* Contact Information */}
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <Mail className="h-5 w-5 mr-2 text-blue-600" />
-              Contact Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-700">
-                  Email Address *
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter email address"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-slate-700">
-                  Phone Number *
-                </Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Enter phone number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="address" className="text-slate-700">
-                  Address *
-                </Label>
-                <Input
-                  id="address"
-                  name="address"
-                  type="text"
-                  placeholder="Enter full address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="city" className="text-slate-700">
-                  City *
-                </Label>
-                <Input
-                  id="city"
-                  name="city"
-                  type="text"
-                  placeholder="Enter city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="state" className="text-slate-700">
-                  State *
-                </Label>
-                <Input
-                  id="state"
-                  name="state"
-                  type="text"
-                  placeholder="Enter state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="zipCode" className="text-slate-700">
-                  ZIP Code
-                </Label>
-                <Input
-                  id="zipCode"
-                  name="zipCode"
-                  type="text"
-                  placeholder="Enter ZIP code"
-                  value={formData.zipCode}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="emergencyContact" className="text-slate-700">
-                  Emergency Contact
-                </Label>
-                <Input
-                  id="emergencyContact"
-                  name="emergencyContact"
-                  type="text"
-                  placeholder="Enter emergency contact name"
-                  value={formData.emergencyContact}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="emergencyPhone" className="text-slate-700">
-                  Emergency Phone
-                </Label>
-                <Input
-                  id="emergencyPhone"
-                  name="emergencyPhone"
-                  type="tel"
-                  placeholder="Enter emergency phone"
-                  value={formData.emergencyPhone}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-            </div>
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputGroup
+              label="Email"
+              name="email"
+              type="email"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Address"
+              name="address"
+              required
+              register={register}
+              className="md:col-span-2"
+            />
+            <InputGroup label="City" name="city" required register={register} />
+            <InputGroup
+              label="State"
+              name="state"
+              required
+              register={register}
+            />
+            <InputGroup label="ZIP Code" name="zipCode" register={register} />
           </div>
+
 
           {/* Professional Information */}
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
-              Professional Information
-            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="employeeId" className="text-slate-700">
-                  Employee ID *
-                </Label>
-                <Input
-                  id="employeeId"
-                  name="employeeId"
-                  type="text"
-                  placeholder="Enter employee ID"
-                  value={formData.employeeId}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="department" className="text-slate-700">
-                  Department *
-                </Label>
-                <select
-                  id="department"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                  required
-                >
-                  <option value="">Select department</option>
-                  {departments.map((dept) => (
-                    <option key={dept} value={dept}>
-                      {dept}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="position" className="text-slate-700">
-                  Position *
-                </Label>
-                <select
-                  id="position"
-                  name="position"
-                  value={formData.position}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                  required
-                >
-                  <option value="">Select position</option>
-                  {positions.map((pos) => (
-                    <option key={pos} value={pos}>
-                      {pos}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="specialization" className="text-slate-700">
-                  Specialization *
-                </Label>
-                <Input
-                  id="specialization"
-                  name="specialization"
-                  type="text"
-                  placeholder="Enter specialization"
-                  value={formData.specialization}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="qualification" className="text-slate-700">
-                  Highest Qualification *
-                </Label>
-                <select
-                  id="qualification"
-                  name="qualification"
-                  value={formData.qualification}
-                  onChange={handleInputChange}
-                  className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-                  required
-                >
-                  <option value="">Select qualification</option>
-                  {qualifications.map((qual) => (
-                    <option key={qual} value={qual}>
-                      {qual}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="experience" className="text-slate-700">
-                  Experience (Years) *
-                </Label>
-                <Input
-                  id="experience"
-                  name="experience"
-                  type="number"
-                  placeholder="Enter years of experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="joiningDate" className="text-slate-700">
-                  Joining Date *
-                </Label>
-                <Input
-                  id="joiningDate"
-                  name="joiningDate"
-                  type="date"
-                  value={formData.joiningDate}
-                  onChange={handleInputChange}
-                  className="h-10"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="salary" className="text-slate-700">
-                  Salary
-                </Label>
-                <Input
-                  id="salary"
-                  name="salary"
-                  type="number"
-                  placeholder="Enter salary"
-                  value={formData.salary}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="previousInstitution" className="text-slate-700">
-                  Previous Institution
-                </Label>
-                <Input
-                  id="previousInstitution"
-                  name="previousInstitution"
-                  type="text"
-                  placeholder="Enter previous institution"
-                  value={formData.previousInstitution}
-                  onChange={handleInputChange}
-                  className="h-10"
-                />
-              </div>
-            </div>
+            <InputGroup
+              label="Employee ID"
+              name="employeeId"
+              required
+              register={register}
+            />
+            <SelectGroup
+              label="Department"
+              name="department"
+              options={departments}
+              required
+              register={register}
+            />
+             <SelectGroup
+              label="Position"
+              name="position"
+              options={positions}
+              required
+              register={register}
+            />
+             <SelectGroup
+              label="Specialization"
+              name="specialization"
+              options={specializations}
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Experience"
+              name="experience"
+              type="number"
+              placeholder="Years of Experience"
+              required
+              register={register}
+            />
+            <SelectGroup
+              label="Qualification"
+              name="qualification"
+              options={qualifications}
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Joining Date"
+              name="joiningDate"
+              type="date"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Salary"
+              name="salary"
+              type="number"
+              required
+              register={register}
+            />
+            <InputGroup
+              label="Previous Institution"
+              name="previousInstitution"
+              register={register}
+            />
           </div>
-
           {/* Academic Information */}
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <Award className="h-5 w-5 mr-2 text-blue-600" />
-              Academic Information
-            </h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="researchInterests" className="text-slate-700">
-                  Research Interests
-                </Label>
-                <textarea
-                  id="researchInterests"
-                  name="researchInterests"
-                  placeholder="Enter research interests"
-                  value={formData.researchInterests}
-                  onChange={handleInputChange}
-                  className="w-full h-20 rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 resize-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="publications" className="text-slate-700">
-                  Publications
-                </Label>
-                <textarea
-                  id="publications"
-                  name="publications"
-                  placeholder="Enter publications"
-                  value={formData.publications}
-                  onChange={handleInputChange}
-                  className="w-full h-20 rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 resize-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="awards" className="text-slate-700">
-                  Awards & Achievements
-                </Label>
-                <textarea
-                  id="awards"
-                  name="awards"
-                  placeholder="Enter awards and achievements"
-                  value={formData.awards}
-                  onChange={handleInputChange}
-                  className="w-full h-20 rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 resize-none"
-                />
-              </div>
-            </div>
-          </div>
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputGroup
+            label="Research Interests"
+            name="researchInterests"
+            register={register}
+          />
+          <InputGroup
+            label="Enter Publications"
+            name="publications"
+            register={register}
+          />
+          <InputGroup
+            label="Enter Awards & Achievements"
+            name="awards"
+            register={register}
+          />
+         </div>
 
           {/* Form Actions */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-slate-200">
-            <Button type="button" variant="outline" onClick={onClose} className="bg-transparent">
+            <Button type="button" variant="outline" onClick={onClose} className="bg-transparent cursor-pointer">
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-              Add Faculty
+            <Button disabled={uploadingImage} type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+              {loading?(
+                <BtnLoader/>
+              ) : (
+                `${teacherDetails ? "Update" : "Add"} Faculty`
+                
+              )}
             </Button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
+}
+// Subcomponents
+function InputGroup({
+  label,
+  name,
+  type = "text",
+  required = false,
+  register,
+  className = "",
+}) {
+  const max = type === 'date' ? new Date().toISOString().split("T")[0] : undefined
+  return (
+    <div className={`space-y-2 ${className}`}>
+      <Label htmlFor={name}>
+        {label}
+        {required && " *"}
+      </Label>
+      <Input
+        placeholder={`Enter ${label}`}
+        id={name}
+        type={type}
+        max={max}
+        {...register(name, { required })}
+
+      />
+    </div>
+  );
+}
+
+function SelectGroup({
+  label,
+  name,
+  options = [],
+  required = false,
+  register,
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name}>
+        {label}
+        {required && " *"}
+      </Label>
+      <select
+        id={name}
+        {...register(name, { required })}
+        className="h-10 w-full rounded-md border border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
+      >
+        <option value="">Select {label.toLowerCase()}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }

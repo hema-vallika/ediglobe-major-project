@@ -154,10 +154,10 @@ export default function StudentsPage() {
                 ))}
               </select>
 
-              <Button variant="outline" className="h-10 bg-transparent">
+              {/* <Button variant="outline" className="h-10 bg-transparent">
                 <Filter className="h-4 w-4 mr-2" />
                 More Filters
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function StudentsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Graduating Soon</p>
-                  <p className="text-2xl font-bold text-slate-800">{graduatingSoon.length}</p>
+                  <p className="text-2xl font-bold text-slate-800">{graduatingSoon?.length}</p>
                 </div>
               </div>
             </div>

@@ -278,13 +278,13 @@ const filteredRecords = Array.isArray(fees)
                 ))}
               </select>
 
-              <Button
+              {/* <Button
                 variant="outline"
                 className="h-10 bg-transparent"
               >
                 <Filter className="h-4 w-4 mr-2" />
                 More Filters
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -359,15 +359,18 @@ const filteredRecords = Array.isArray(fees)
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200">
               <h2 className="text-lg font-semibold text-slate-800">
-                Fee Records ({filteredRecords.length} found)
+                Fee Records ({filteredRecords?.length} found)
               </h2>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              {
+                filteredRecords.length > 0 ?
+                (
+                  <table className="w-full">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                       Student
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -401,13 +404,13 @@ const filteredRecords = Array.isArray(fees)
                         />
                         <div>
                           <div className="text-sm font-medium text-slate-900">
-                            {record.student.firstName} {record.student.lastName}
+                            {record.student?.firstName} {record.student?.lastName}
                           </div>
                           <div className="text-sm text-slate-500">
-                            {record.student.studentId}
+                            {record.student?.studentId}
                           </div>
                           <div className="text-sm text-slate-500">
-                            {record.student.department}
+                            {record.student?.department}
                           </div>
                         </div>
                       </td>
@@ -482,6 +485,12 @@ const filteredRecords = Array.isArray(fees)
                   ))}
                 </tbody>
               </table>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-slate-500">No records found</p>
+                </div>
+              )
+              }
             </div>
 
             {filteredRecords.length === 0 && (

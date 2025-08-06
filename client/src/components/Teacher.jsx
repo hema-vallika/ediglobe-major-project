@@ -22,109 +22,52 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import AddTeacherForm from "./form/Add-teacher-form"
 import { useDispatch,useSelector} from "react-redux";
-import { getAllTeachers ,deleteTeacher,createTeacher,updateTeacher,getTeacherById} from "../redux/slice/teacherSlice"
+import { getAllTeachers,deleteTeacher } from "../redux/slice/teacherSlice"
+import TeacherDetails from "./TeacherDetails"
+
 
 export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedDepartment, setSelectedDepartment] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
+  const [curTeacherData, setCurTeacherData] = useState(null)
 
   const dispatch = useDispatch();
-  const { teachers, loading, error } = useSelector((state) => state.teacher);
+  const { teachers} = useSelector((state) => state.teacher);
+  const { courses } = useSelector((state) => state.course);
+
 
   useEffect(() => {
     dispatch(getAllTeachers()); 
   }, [dispatch]);
 
-  // Sample teacher data
-  // const teachers = [
-  //   {
-  //     id: "TCH001",
-  //     name: "Dr. Robert Wilson",
-  //     email: "robert.wilson@college.edu",
-  //     phone: "+1 (555) 111-2222",
-  //     department: "Computer Science",
-  //     position: "Professor",
-  //     specialization: "Artificial Intelligence",
-  //     experience: "15 years",
-  //     qualification: "Ph.D. in Computer Science",
-  //     joiningDate: "2009-08-15",
-  //     coursesTeaching: ["AI Fundamentals", "Machine Learning", "Data Structures"],
-  //     studentsCount: 120,
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "TCH002",
-  //     name: "Dr. Maria Garcia",
-  //     email: "maria.garcia@college.edu",
-  //     phone: "+1 (555) 222-3333",
-  //     department: "Business Administration",
-  //     position: "Associate Professor",
-  //     specialization: "Marketing Management",
-  //     experience: "12 years",
-  //     qualification: "Ph.D. in Business Administration",
-  //     joiningDate: "2012-01-20",
-  //     coursesTeaching: ["Marketing Strategy", "Consumer Behavior", "Digital Marketing"],
-  //     studentsCount: 95,
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "TCH003",
-  //     name: "Prof. James Anderson",
-  //     email: "james.anderson@college.edu",
-  //     phone: "+1 (555) 333-4444",
-  //     department: "Engineering",
-  //     position: "Assistant Professor",
-  //     specialization: "Mechanical Engineering",
-  //     experience: "8 years",
-  //     qualification: "M.Tech in Mechanical Engineering",
-  //     joiningDate: "2016-07-10",
-  //     coursesTeaching: ["Thermodynamics", "Fluid Mechanics", "Heat Transfer"],
-  //     studentsCount: 85,
-  //     status: "Active",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  //   {
-  //     id: "TCH004",
-  //     name: "Dr. Sarah Thompson",
-  //     email: "sarah.thompson@college.edu",
-  //     phone: "+1 (555) 444-5555",
-  //     department: "Psychology",
-  //     position: "Professor",
-  //     specialization: "Clinical Psychology",
-  //     experience: "18 years",
-  //     qualification: "Ph.D. in Psychology",
-  //     joiningDate: "2006-09-01",
-  //     coursesTeaching: ["Abnormal Psychology", "Cognitive Psychology", "Research Methods"],
-  //     studentsCount: 110,
-  //     status: "On Leave",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //   },
-  // ]
+ 
 
   const departments = ["Computer Science", "Business Administration", "Engineering", "Psychology", "Mathematics"]
   const statuses = ["Active", "On Leave", "Retired"]
 
-  const filteredTeachers = teachers.filter((teacher) => {
+  const filteredTeachers = teachers.length > 0 ? teachers.filter((teacher) => {
     const matchesSearch =
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      teacher.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      teacher.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      teacher.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.specialization.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesDepartment = selectedDepartment === "all" || teacher.department === selectedDepartment
     const matchesStatus = selectedStatus === "all" || teacher.status === selectedStatus
 
     return matchesSearch && matchesDepartment && matchesStatus
-  })
+  }) : []
 
-  const handleAddTeacher = (teacherData) => {
-    console.log("New teacher data:", teacherData)
-    // Here you would typically send the data to your backend
-    // For now, we'll just log it
-  }
+// const handleAddTeacher =  (teacherData) => {
+//   try {
+//     dispatch(createTeacher(teacherData));
+//     setIsAddFormOpen(false); // Close modal on success
+//   } catch (error) {
+//     console.error("Failed to add teacher", error);
+//   }
+// };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -139,7 +82,9 @@ export default function TeachersPage() {
               <p className="text-slate-300 text-lg">Manage faculty records, assignments, and academic information</p>
             </div>
             <div className="mt-4 md:mt-0 flex space-x-3">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setIsAddFormOpen(true)}>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => {setIsAddFormOpen(true);
+                setCurTeacherData(null); // Reset form for new teacher
+              }}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Faculty
               </Button>
@@ -197,10 +142,10 @@ export default function TeachersPage() {
                 ))}
               </select>
 
-              <Button variant="outline" className="h-10 bg-transparent">
+              {/* <Button variant="outline" className="h-10 bg-transparent">
                 <Filter className="h-4 w-4 mr-2" />
                 More Filters
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -217,7 +162,7 @@ export default function TeachersPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Total Faculty</p>
-                  <p className="text-2xl font-bold text-slate-800">89</p>
+                  <p className="text-2xl font-bold text-slate-800">{teachers?.length}</p>
                 </div>
               </div>
             </div>
@@ -229,7 +174,7 @@ export default function TeachersPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Professors</p>
-                  <p className="text-2xl font-bold text-slate-800">34</p>
+                  <p className="text-2xl font-bold text-slate-800">{teachers?.length}</p>
                 </div>
               </div>
             </div>
@@ -241,7 +186,7 @@ export default function TeachersPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-slate-600">Active Courses</p>
-                  <p className="text-2xl font-bold text-slate-800">156</p>
+                  <p className="text-2xl font-bold text-slate-800">{courses?.length}</p>
                 </div>
               </div>
             </div>
@@ -269,7 +214,8 @@ export default function TeachersPage() {
               <h2 className="text-lg font-semibold text-slate-800">Faculty List ({filteredTeachers.length} found)</h2>
             </div>
 
-            <div className="overflow-x-auto">
+            {filteredTeachers.length ? (
+              <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-50">
                   <tr>
@@ -295,17 +241,17 @@ export default function TeachersPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
                   {filteredTeachers.map((teacher) => (
-                    <tr key={teacher.id} className="hover:bg-slate-50">
+                    <tr key={teacher.employeeId} className="hover:bg-slate-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <img
                             className="h-10 w-10 rounded-full"
-                            src={teacher.avatar || "/placeholder.svg"}
+                            src={teacher.photo?.url || "/placeholder.svg"}
                             alt={teacher.name}
                           />
                           <div className="ml-4">
                             <div className="text-sm font-medium text-slate-900">{teacher.name}</div>
-                            <div className="text-sm text-slate-500">{teacher.id}</div>
+                            <div className="text-sm text-slate-500">{teacher.employeeId}</div>
                           </div>
                         </div>
                       </td>
@@ -348,16 +294,23 @@ export default function TeachersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0 bg-transparent">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0 bg-transparent">
+                          <TeacherDetails teacher={teacher} />
+
+                          <Button size="sm" variant="outline" className="h-8 w-8 p-0 bg-transparent" onClick={() => {
+                                setIsAddFormOpen(true);
+                                console.log("clicked");
+                                
+                                setCurTeacherData(teacher);
+                              }}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
                             className="h-8 w-8 p-0 text-red-600 hover:text-red-700 bg-transparent"
+                            onClick={() => {
+                              dispatch(deleteTeacher(teacher.employeeId));
+                            }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -367,9 +320,8 @@ export default function TeachersPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            {filteredTeachers.length === 0 && (
+              </div>
+              ) : (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-slate-900 mb-2">No faculty found</h3>
@@ -380,7 +332,12 @@ export default function TeachersPage() {
         </div>
       </section>
         {/* Add Teacher Form */}
-        <AddTeacherForm isOpen={isAddFormOpen} onClose={() => setIsAddFormOpen(false)} onSubmit={handleAddTeacher} />
+        {isAddFormOpen && (
+          <AddTeacherForm
+            teacherDetails={curTeacherData}
+            onClose={() => setIsAddFormOpen(false)}
+          />
+        )}
 
       <Footer />
     </div>
