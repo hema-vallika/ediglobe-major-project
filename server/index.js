@@ -11,7 +11,12 @@ import uploadRoute from './routes/uploadRoute.js'
 
 const app = express();
 dotenv.config();
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL ,
+  credentials: true, // Allow credentials to be sent with requests
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type, Authorization"
+}));
 app.use(express.json());
 
 connectDB();
