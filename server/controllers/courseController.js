@@ -6,7 +6,7 @@ export const getAllCourses = async (req, res) => {
         const courses = await Course.find().populate('instructor');
         res.status(200).json(courses);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         
         res.status(500).json({ message: "Server error" });
     }
@@ -20,7 +20,7 @@ export const getCourseById = async (req, res) => {
         }
         res.status(200).json(course);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -37,7 +37,7 @@ export const createCourse = async (req, res) => {
         await newCourse.save();
         res.status(201).json(newCourse);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -50,7 +50,7 @@ export const updateCourse = async (req, res) => {
         }
         res.status(200).json(course);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }
@@ -63,7 +63,7 @@ export const deleteCourse = async (req, res) => {
         }
         res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 }

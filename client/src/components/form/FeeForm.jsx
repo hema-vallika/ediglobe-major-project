@@ -52,27 +52,23 @@ export default function FeeForm({
   const onFormSubmit = (data) => {
 
     if (studentFeeDetails) {
-      console.log("Updating .....", data);
+      // console.log("Updating .....", data);
       dispatch(updateFee({ id: studentFeeDetails._id, data }))
         .unwrap()
         .then(() => {
           reset();
           setIsOpen(false);
         })
-        .catch((err) => {
-          console.error("Failed to updated fees:", err);
-        });
+       
     } else {
-      console.log("Adding .....", data);
+      // console.log("Adding .....", data);
       dispatch(createFee(data))
         .unwrap()
         .then(() => {
           reset();
           setIsOpen(false);
         })
-        .catch((err) => {
-          console.error("Failed to add fee:", err);
-        });
+     
     }
   };
 

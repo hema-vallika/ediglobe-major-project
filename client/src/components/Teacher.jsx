@@ -298,7 +298,7 @@ export default function TeachersPage() {
 
                           <Button size="sm" variant="outline" className="h-8 w-8 p-0 bg-transparent" onClick={() => {
                                 setIsAddFormOpen(true);
-                                console.log("clicked");
+                                // console.log("clicked");
                                 
                                 setCurTeacherData(teacher);
                               }}>

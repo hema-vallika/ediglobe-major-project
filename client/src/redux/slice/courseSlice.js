@@ -79,7 +79,7 @@ const courseSlice = createSlice({
       })
       .addCase(getCourses.fulfilled, (state, action) => {
         state.loading = false
-        console.log("Fetch course res: ", action.payload);
+        // console.log("Fetch course res: ", action.payload);
         state.courses = action.payload
       })
       .addCase(getCourses.rejected, (state, action) => {
@@ -93,7 +93,7 @@ const courseSlice = createSlice({
       })
       .addCase(getCourseById.fulfilled, (state, action) => {
         state.loading = false
-        console.log("Fetch course res: ", action.payload);
+        // console.log("Fetch course res: ", action.payload);
         state.currentCourse = action.payload
       })
       .addCase(getCourseById.rejected, (state, action) => {
@@ -107,7 +107,7 @@ const courseSlice = createSlice({
       })
       .addCase(createCourse.fulfilled, (state, action) => {
         state.loading = false
-        console.log("create course res: ", action.payload);
+        // console.log("create course res: ", action.payload);
         toast.success("Course created successfully.")
         state.courses.push(action.payload)
       })

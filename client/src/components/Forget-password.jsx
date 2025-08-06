@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
     }
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log("Password reset request for:", email)
+    // console.log("Password reset request for:", email)
     setIsSubmitted(true)
     // Add your forgot password logic here
   }

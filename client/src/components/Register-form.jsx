@@ -34,11 +34,11 @@ export default function RegisterForm() {
     dispatch(registerUser(formData))
       .unwrap()
       .then(() => {
-        console.log("Registration successful");
+        // console.log("Registration successful");
         navigate("/auth/login");
       })
       .catch((err) => {
-        console.error("Registration failed:", err);
+        // console.error("Registration failed:", err);
         alert(err || "Registration failed");
       });
   }

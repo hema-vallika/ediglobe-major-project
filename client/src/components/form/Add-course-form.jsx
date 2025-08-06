@@ -22,7 +22,7 @@ export default function AddCourseForm({ onClose, initialData = null }) {
 
   const dispatch = useDispatch();
   const isEditMode = Boolean(initialData);
-  console.log(initialData);
+  // console.log(initialData);
 
 
   const departments = [
@@ -37,31 +37,27 @@ export default function AddCourseForm({ onClose, initialData = null }) {
   const modes = ["In-Person", "Online", "Hybrid"];
 
   const handleFormSubmit = (data) => {
-    console.log("formData: ", data);
+    // console.log("formData: ", data);
     data.prerequisites = data.prerequisites.split(",").map((i) => i.trim());
 
     if (isEditMode) {
       dispatch(updateCourse({id:initialData?._id, data}))
         .unwrap()
-        .then((res) => {
-          console.log("Course Updated:", res);
+        .then(() => {
+          // console.log("Course Updated:", res);
           reset();
           onClose()
         })
-        .catch((err) => {
-          console.error("Failed to updated couser:", err);
-        });
+      
     } else {
       dispatch(createCourse(data))
         .unwrap()
-        .then((res) => {
-          console.log("Course Updated:", res);
+        .then(() => {
+          // console.log("Course Updated:", res);
           reset();
           onClose()
         })
-        .catch((err) => {
-          console.error("Failed to updated couser:", err);
-        });
+       
     }
   };
 

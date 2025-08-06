@@ -67,7 +67,7 @@ export default function AddTeacherForm({ onClose, teacherDetails }) {
   const {loading} = useSelector((state) => state.teacher)
   const dispatch = useDispatch();
 
-  console.log("Teacher details:", teacherDetails);
+  // console.log("Teacher details:", teacherDetails);
 
   
   const departments = ["Computer Science", "Business Administration", "Engineering", "Psychology", "Mathematics"]
@@ -92,8 +92,8 @@ const categories = ["General", "SC", "ST", "OBC", "EWS"];
   const handlePhotoChange = async (e) => {
     setUploadingImage(true);
     if (uploadedImage) {
-      const res = await deleteImage(uploadedImage.public_id);
-      console.log("public id:", uploadedImage.public_id, res);
+       await deleteImage(uploadedImage.public_id);
+      // console.log("public id:", uploadedImage.public_id, res);
     }
     const file = e.target.files[0];
     if (file) {
@@ -107,7 +107,7 @@ const categories = ["General", "SC", "ST", "OBC", "EWS"];
     const res = await uploadImage(file);
     setUploadedImage(res);
     setUploadingImage(false);
-    console.log("image upload response:", res);
+    // console.log("image upload response:", res);
   };
 
 
@@ -122,21 +122,21 @@ const onFormSubmit = (data) => {
   if(teacherDetails) {
     dispatch(updateTeacher({ id: teacherDetails.employeeId, formData }))
       .unwrap()
-      .then((res) => {
-        console.log("Teacher updated successfully",res);
+      .then(() => {
+        // console.log("Teacher updated successfully",res);
         
         toast.success("Teacher updated successfully");
         onClose();
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Failed to update teacher");
-        console.error("Update teacher error:", error);
+        // console.error("Update teacher error:", error);
       });
   }else{
     dispatch(createTeacher(formData))
       .unwrap()
-      .then((res) => {
-        console.log("Teacher created successfully",res);
+      .then(() => {
+        // console.log("Teacher created successfully",res);
         reset();
         setPhotoPreview(null);
         setUploadedImage(null);
@@ -144,9 +144,9 @@ const onFormSubmit = (data) => {
         toast.success("Teacher added successfully");
         onClose();
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Failed to add teacher");
-        console.error("Create teacher error:", error);
+        // console.error("Create teacher error:", error);
       });
   }
 

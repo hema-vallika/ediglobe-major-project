@@ -38,7 +38,7 @@ export default function StudentForm({ onClose, studentDetails }) {
   const { loading } = useSelector((state) => state.student);
   const dispatch = useDispatch();
 
-  console.log("studentDetails", studentDetails);
+  // console.log("studentDetails", studentDetails);
 
   const departments = [
     "Computer Science",
@@ -65,7 +65,7 @@ export default function StudentForm({ onClose, studentDetails }) {
     setUploadingImage(true);
     if (uploadedImage) {
       const res = await deleteImage(uploadedImage.public_id);
-      console.log("public id:", uploadedImage.public_id, res);
+      // console.log("public id:", uploadedImage.public_id, res);
     }
     const file = e.target.files[0];
     if (file) {
@@ -79,7 +79,7 @@ export default function StudentForm({ onClose, studentDetails }) {
     const res = await uploadImage(file);
     setUploadedImage(res);
     setUploadingImage(false);
-    console.log("image upload response:", res);
+    // console.log("image upload response:", res);
   };
 
   const onFormSubmit = (data) => {
@@ -94,29 +94,25 @@ export default function StudentForm({ onClose, studentDetails }) {
     if (studentDetails) {
       dispatch(updateStudent({ id: studentDetails._id, formData }))
         .unwrap()
-        .then((res) => {
-          console.log("Student Updated:", res);
+        .then(() => {
+          // console.log("Student Updated:", res);
           reset();
           setPhotoPreview(null);
           setUploadedImage(null);
           onClose();
         })
-        .catch((err) => {
-          console.error("Failed to updated student:", err);
-        });
+      
     } else {
       dispatch(createStudent(formData))
         .unwrap()
-        .then((res) => {
-          console.log("Student created:", res);
+        .then(() => {
+          // console.log("Student created:", res);
           reset();
           setPhotoPreview(null);
           setUploadedImage(null);
           onClose();
         })
-        .catch((err) => {
-          console.error("Failed to create student:", err);
-        });
+        
     }
   };
 

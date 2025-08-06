@@ -29,15 +29,15 @@ export default function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Login attempt:", formData);
+    // console.log("Login attempt:", formData);
     dispatch(loginUser(formData))
       .unwrap()
       .then(() => {
-        console.log("Login successful");
+        // console.log("Login successful");
         navigate("/"); // Redirect to home on success
       })
       .catch((err) => {
-        console.error("Login failed:", err);
+        // console.error("Login failed:", err);
         alert(err || "Login failed"); // Show error message
       });
   };

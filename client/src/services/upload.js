@@ -10,8 +10,8 @@ export const createSignature = async () => {
       `${import.meta.env.VITE_SERVER_ORIGIN}/api/upload/signature`
     );
     return response.data;
-  } catch (error) {
-    console.error(error);
+  } catch {
+    
     return null;
   }
 };
@@ -19,7 +19,7 @@ export const createSignature = async () => {
 export const uploadImage = async (file) => {
   try {
     const signData = await createSignature();
-    console.log("Signature data:", signData);
+    // console.log("Signature data:", signData);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("file", file);
@@ -30,8 +30,8 @@ export const uploadImage = async (file) => {
 
     const response = await axios.post(url, formData);
     return response.data;
-  } catch (error) {
-    console.error(error);
+  } catch {
+    
     return null;
   }
 };
@@ -46,8 +46,8 @@ export const deleteImage = async (publicId) => {
       }
     );
     return response.data;
-  } catch (error) {
-    console.error(error);
+  } catch {
+    
     return null;
   }
 };

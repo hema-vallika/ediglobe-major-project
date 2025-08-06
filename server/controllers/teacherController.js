@@ -2,8 +2,8 @@ import Teacher from "../models/Teacher.js";
 
 export const createTeacher = async (req, res) => {
     try {
-        console.log("Creating teacher with data:", req.body);
-        console.log("upload file",req.file);
+        // console.log("Creating teacher with data:", req.body);
+        // console.log("upload file",req.file);
         
         
         const { email } = req.body;
@@ -16,7 +16,7 @@ export const createTeacher = async (req, res) => {
         await newTeacher.save();
         res.status(201).json(newTeacher);
     }catch(error){
-        console.log("Error creating teacher:", error);
+        // console.log("Error creating teacher:", error);
         
         res.status(500).json({ message: "Server error" });
     }

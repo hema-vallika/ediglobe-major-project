@@ -113,7 +113,7 @@ export const updateFee = async (req, res) => {
     feesDetails.pendingAmount = pendingAmount;
     feesDetails.totalAmount = totalAmount;
 
-    console.log("body", feesDetails);
+    // console.log("body", feesDetails);
 
     const updated = await Fees.findByIdAndUpdate(req.params.id, feesDetails, {
       new: true,

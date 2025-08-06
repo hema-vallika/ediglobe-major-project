@@ -13,7 +13,7 @@ export const createTeacher = createAsyncThunk(
   async (teacherData, { rejectWithValue }) => {
     try {
       const response = await axios.post(API_URL, teacherData);
-      console.log("Teacher created:", response.data);
+    //   console.log("Teacher created:", response.data);
       
       return response.data;
     } catch (err) {

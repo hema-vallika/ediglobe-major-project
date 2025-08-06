@@ -51,7 +51,7 @@ export const updateStudent = createAsyncThunk(
   "students/update",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      console.log({ id, formData });
+      // console.log({ id, formData });
       
       const response = await axios.put(`${API_URL}/${id}`, formData);
       return response.data;
