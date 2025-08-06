@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // Base URL (change this according to your backend API)
-const API_URL = "http://localhost:5000/api/student";
+const API_URL =  `${import.meta.env.VITE_SERVER_ORIGIN}/api/student`;
 
 // --- Async Thunks ---
 

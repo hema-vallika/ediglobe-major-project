@@ -2,13 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
 
+
 // 🔹 Async thunk for login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${import.meta.env.VITE_SERVER_ORIGIN}/api/auth/login`,
         formData
       );
       // Save token to localStorage
@@ -25,7 +26,7 @@ export const registerUser = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${import.meta.env.VITE_SERVER_ORIGIN}/api/auth/register`,
         formData
       );
       // Save token to localStorage

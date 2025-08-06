@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // Base API URL
-const API_URL = "http://localhost:5000/api/teachers";
+const API_URL = `${import.meta.env.VITE_SERVER_ORIGIN}/api/teachers`;
 
 // --- Async Thunks ---
 
