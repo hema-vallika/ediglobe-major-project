@@ -64,7 +64,7 @@ export default function StudentForm({ onClose, studentDetails }) {
   const handlePhotoChange = async (e) => {
     setUploadingImage(true);
     if (uploadedImage) {
-      const res = await deleteImage(uploadedImage.public_id);
+       await deleteImage(uploadedImage.public_id);
       // console.log("public id:", uploadedImage.public_id, res);
     }
     const file = e.target.files[0];
